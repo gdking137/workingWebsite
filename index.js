@@ -35,10 +35,7 @@ app.post('/register', (req, res) =>{
       success: true
     })
   })     //mongodb method
-
-
-
-})
+}) 
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
