@@ -4,6 +4,8 @@ const port = 4000
 const bodyParser = require('body-parser');
 const {User} = require("./models/User");
 
+const config = require('./config/key');
+
 //bodyparser lets server interpret the request and send back the data requested
 //application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: true}))
@@ -11,7 +13,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json());
 
 const mongoose = require('mongoose')
-mongoose.connect('', {
+mongoose.connect(config.mongoURI, {
 }).then(() => console.log('MongoDB Connected...'))
   .catch(err => console.log(err))
 
