@@ -3,6 +3,7 @@ const app = express()
 const port = 4000
 const bodyParser = require('body-parser');
 const {User} = require("./models/User");
+const cookieParser = require('cookie-parser');
 
 const config = require('./config/key');
 
@@ -11,6 +12,9 @@ const config = require('./config/key');
 app.use(bodyParser.urlencoded({extended: true}))
 //application/json
 app.use(bodyParser.json());
+app.use(cookieParser());
+
+
 
 const mongoose = require('mongoose')
 mongoose.connect(config.mongoURI, {
@@ -21,6 +25,7 @@ mongoose.connect(config.mongoURI, {
 app.get('/', (req, res) => {
   res.send('Hello World! ')
 })
+
 
 app.post('/register', (req, res) =>{
   //회원가입 할때 필요한 정보들을 client에서 가져오면
@@ -57,8 +62,13 @@ app.post('/login', (req, res) =>{           //몽고디비 매소드
 
       //비밀번호까지 맞다면 토클을 생성한다.
       user.generateToken((err, user) =>{
+        if(err) return res.status(400).send(err);
 
-        
+
+        //토큰을 저장한다. 어디에? 쿠키, 로컬스토리지 니 맘대로
+            res.cookie("x_auth", user.token)  
+            .status(200)    //success
+            .json({loginSuccess: true, userID: user._id})
       })
     })
 

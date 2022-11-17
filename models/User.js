@@ -79,13 +79,13 @@ userSchema.methods.generateToken = function(cb){
   
     //jsonwebtokend을 이용해서 토큰을 생성하기
 
-    var token = jwt.sign(user._id, 'secretToken')
+    var token = jwt.sign(user._id.toHexString(), 'secretToken')
     //user._id + 'secretToken' = token 
     //->
 
     //'secretToken' -> user._id
-
-    user.token = tokenuser.save(function(err,user){
+    user.token = token
+    user.save(function(err,user){
         if(err) return cb(err)
         cb(null, user)
     })
