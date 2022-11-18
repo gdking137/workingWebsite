@@ -4,6 +4,7 @@ const port = 4000
 const bodyParser = require('body-parser');
 const {User} = require("./models/User");
 const cookieParser = require('cookie-parser');
+const {auth} = require("./middleware/auth");
 
 const config = require('./config/key');
 
@@ -27,7 +28,7 @@ app.get('/', (req, res) => {
 })
 
 
-app.post('/register', (req, res) =>{
+app.post('/api/users/register', (req, res) =>{
   //회원가입 할때 필요한 정보들을 client에서 가져오면
   //데이터 베이스에 넣는다.
 
@@ -43,7 +44,7 @@ app.post('/register', (req, res) =>{
 }) 
 
 
-app.post('/login', (req, res) =>{           //몽고디비 매소드
+app.post('/api/users//login', (req, res) =>{           //몽고디비 매소드
   //요청된 이메일을 데이터베이스에서 있는지 찾는다
   User.findOne({ email: req.body.email}, (err, user)=>{
     if(!user) {
@@ -71,14 +72,25 @@ app.post('/login', (req, res) =>{           //몽고디비 매소드
             .json({loginSuccess: true, userID: user._id})
       })
     })
-
-
   }) 
-
- 
-
 })
 
+//Router <- express에서 재공하는 툴을 사용해서 코드를 정리한다.
+
+app.post('/api/users/auth', auth, (req,res)=>{ //before callback function we add auth
+
+  //여기까지 미들웨어를 통과해 왔다는 얘기는 authentication이 True 라는 말.
+  res.status(200).json({
+    _id: req.user._id,
+    isAdmin: req.user.role ===0 ? false : true,     //
+    isAuth: true,
+    email: req.user.email,
+    name: req.user.name,
+    lastname: req.user.lastname,
+    role: req.user.role,
+    image: req.user.image
+  })
+})
 
 
 
